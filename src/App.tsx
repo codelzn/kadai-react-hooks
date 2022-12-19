@@ -16,6 +16,14 @@ type WeatherData = {
 	winds: string[]
 }
 
+enum WeatherTitle {
+	'地域',
+	'波の高さ',
+	'天気コード',
+	'天気',
+	'風',
+}
+
 const Lis = ({ dt }: { dt: string[] }) => {
 	return (
 		<ul>
@@ -28,12 +36,12 @@ const Lis = ({ dt }: { dt: string[] }) => {
 
 function App() {
 	const [weatherData, setWeather] = useState<WeatherData[]>()
-	const handleChange = async (city: City) => {
+	const handleChange = async (city: City): Promise<void> => {
 		const fetchData = await fetch(apiUrl[city])
-    const weather = await fetchData.json()
+		const weather = await fetchData.json()
 		const currentData = weather[0].timeSeries[0].areas as WeatherData[]
 		setWeather(currentData)
-  }
+	}
 	useEffect(() => {
 		handleChange('tokyo')
 	}, [])
@@ -52,21 +60,23 @@ function App() {
 				{weatherData &&
 					weatherData.map((item, index) => (
 						<li key={index}>
-							<div>city:{item.area.name}</div>
 							<div>
-								<p>waves:</p>
+								{WeatherTitle[0]}:{item.area.name}
+							</div>
+							<div>
+								<p>{WeatherTitle[1]}</p>
 								<Lis dt={item.waves ?? []} />
 							</div>
 							<div>
-								<p>weatherCodes: </p>
+								<p>{WeatherTitle[2]}</p>
 								<Lis dt={item.weatherCodes} />
 							</div>
 							<div>
-								<p>weathers</p>
+								<p>{WeatherTitle[3]}</p>
 								<Lis dt={item.weathers} />
 							</div>
 							<div>
-								<p>winds</p>
+								<p>{WeatherTitle[4]}</p>
 								<Lis dt={item.winds} />
 							</div>
 							<hr />
